@@ -1,0 +1,46 @@
+Zadanie 2a)
+Rozpocząłem od researchu i trafiłem na algorytm Grahama oraz algorytm Jarvisa, mają jednak znaczną różnicę w złożoności,
+więc postawiłem na algorytm Grahama, po znalezieniu najmniejszego punktu potrzebujemy posortować punkty rosnąco względem kątu
+do punktu początkowego, nie chciałem korzystać z funkcji wbudowanych. Kąty możemy wyznaczyć poprzez porównanie tangensów.
+Pierwotnie myślałem, żeby zostawić tangens w postaci bok/bok, ale dzielenie nie jest optymalne, więc po szybkim przekształceniu
+dostajemy prostsze dla komputera działanie.
+
+Następnym krokiem jest sprawdzenie czy kąt między punktem A i B jest większy od kąta między B i C (również tangensy),
+jeżeli jest większy, to oznacza, że punkt B nie będzie należał do naszej otoczki (krawędzią może być odcinek AC), 
+wyrzucamy go zatem z listy kandydatów. Po przejściu w ten sposób przez wszystkie punkty otrzymujemy otoczkę
+o minimalnej ilości wierzchołków.
+
+Zadanie 2b)
+Szukając najmniej oddalonych od siebie prostych równoległych nietrudno zauważyć, że muszą to być proste przechodzące
+przez punkty naszej wcześniej znalezionej otoczki, ponieważ gdyby nie to, to otrzymujemy bardzo oddalone proste lub takie, 
+które nie spełniają warunku zawierania punktów. Dość intuicyjne jest również to, że proste zawierające wszystkie punkty,
+muszą przechodzić przez wierzchołki najdalej oddalone od siebie. Problem pojawił się jednak, gdy zrozumiałem, że
+takie proste mogą przecież (oczywiście w ograniczonym przedziale stopni) obracać się na danym punkcie, tzn. mieć inny 
+współczynnik kierunkowy, przez ich dystans od siebie będzie różny. Po czasie doszedłem do wniosku, że najmniejszą odległość dla
+danej pary prostych otrzymamy, gdy co najmniej jedna z nich zawiera w sobie krawędź wielokąta.
+
+Po tym wnioskowaniu można zacząć pisać, skoro jak już ustaliliśmy proste spełniające równanie zachowują się tak:
+pierwsza będzie jedną z krawędzi, druga będzie przechodziła przez punkt najbardziej oddalony od pierwszej prostej,
+będziemy mogli zacząć w taki sposób: bierzemy krawędź, szukamy punktu najdalszego jednocześnie otrzymując w ten sposób
+odległość prostej pierwszej od drugiej. Dość łatwo zauważyć, że od tego momentu możemy przechodzić o jeden w tym samym kierunku,
+tzn. przykładowo dla wielokąta ABCDEF, biorąc początkowo krawędź AB i wierzchołek D, następna do sprawdzenia będzie
+krawędź BC i wierzchołek E, potem CD i F itd.
+
+Końcowo wybieramy najniższą z wyliczonych odległości i otrzymujemy wynik.
+
+Podczas implementacji pojawiły się problemy z błędnym indeksowaniem i porównywaniem, ale po analizie pętli 
+udało się skrócić i naprawić kod.
+
+Zadanie 2c)
+Podobnie jak w podpunkcie a), udało mi się znaleźć materiały ułatwiające zrozumienie problemu oraz algorytmu.
+Jest to algorytm rekurencyjny o następującym działaniu: sortujemy punkty wg x, wybieramy punkt "środkowy", czyli taki,
+który po lewej i prawej stronie ma taką samą ilość elementów. Dzielimy nasz lewy i prawy podzbiór rekurencyjnie
+w taki sam sposób, aż znalezienie najmniej oddalonej pary nie będzie trywialne. Po obliczeniu odległości
+par po lewej i prawej stronie wybieramy tą odległość (delta), która jest mniejsza, sprawdzamy, czy w naszym zbiorze
+znajdują się punkty oddalone od punktu środkowego o < delta, jeżeli tak to istnieje szansa, że najmniej oddalone pary trafiły
+na różne połowy przy podziale i nie zostały porównane. Tworzymy następnie "pasek" o szerokości 2*delta (delta w lewo i prawo od środka).
+Sortujemy punkty znajdujące się w nim wg współrzędnej y, i zaczynając od góry sprawdzamy maksymalnie 6 punktów w dół, 
+czy któraś z par nie ma odległości < delta. Dlaczego 6? Można to pokazać rysując prostokąt delta x 2*delta, 
+może na nim znajdować się maksymalnie 6 punktów o odległości <= delta, gdyby było 7, algorytm wcześniej znalazłby parę o mniejszej delcie.
+W ten sposób iterując po rozbiciach otrzymamy tę deltę, która jest najmniejsza, poprzez sprowadzenie problemu
+do trywialnej postaci (n <= 3).
